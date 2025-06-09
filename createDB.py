@@ -1,6 +1,7 @@
 
-import duckdb
 import pandas as pd
+#import duckdb
+
 
 # Define the column specifications (widths) and names
 colspecs =     [(0, 6),(6, 15),(15, 23),(23, 29),(29, 35),(35, 36),(36, 42),(42, 49),(49, 50),(50, 59),(59, 68),(68, 77),(77, 86),(86, 95),(95, 104),(104, 113),
@@ -14,7 +15,7 @@ column_names = ['PCode7','PCode8','UnitPCode','IntroDate','TermDate','UserType',
                 ]
 widths =[7,8,8,6,6,1,6,7,1,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,2,3,10,10,9,9,9,5,9,9]
 fileName= r'NSPL21_NOV_2023_UK.txt'
-#NSPL21_NOV_2023_UK.txt
+
 # Read the fixed-width text file
 df = pd.read_fwf(fileName, widths=widths, names=column_names)
 
