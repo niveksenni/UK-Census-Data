@@ -5,17 +5,6 @@
 		}
 	],
 	"settings": {
-		"dbcode.connections": [
-			{
-				"connectionId": "e5SWVWGYUqdG7LGAYFbNu",
-				"name": "UK Census DB",
-				"driver": "duckdb",
-				"color": "#00B083",
-				"connectionType": "socket",
-				"socket": "UK-Census-Data/uk-census-db.duckdb",
-				"readOnly": false
-			}
-		],
 		"workbench.colorCustomizations": {}
 	}
 }
