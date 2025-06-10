@@ -197,5 +197,5 @@ cython_debug/
 # Other files
 NSPL21_NOV_2023_UK.csv
 NSPL21_NOV_2023_UK.txt
-uk-census-db*
-uk-census-db.duckdb
+UKCensusDB.duckdb
+UKCensusDB.*

@@ -19,7 +19,7 @@ fileName= r'NSPL21_NOV_2023_UK.txt'
 #df = pd.read_fwf(fileName, widths=widths, names=column_names)
 
 # Connect to a database file (this will create the file if it doesn't exist)
-conn = duckdb.connect('UK-Census-DB.duckdb')
+conn = duckdb.connect('UKCensusDB.duckdb')
 
 # Create the table and insert data from the DataFrame
 sql = "CREATE TABLE postcode_lookup AS SELECT * FROM df"
