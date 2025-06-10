@@ -5,6 +5,16 @@
 		}
 	],
 	"settings": {
-		"workbench.colorCustomizations": {}
+		"workbench.colorCustomizations": {},
+		"dbcode.connections": [
+			{
+				"connectionId": "uCUGU0z9vn2L5zk_adcFK",
+				"name": "UKCensus21",
+				"driver": "duckdb",
+				"connectionType": "socket",
+				"socket": "UK-Census-Data/data/ukcensusdb.duckdb",
+				"readOnly": false
+			}
+		]
 	}
 }
