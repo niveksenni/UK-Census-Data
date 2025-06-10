@@ -11,17 +11,40 @@ column_names = ['PCode7','PCode8','UnitPCode','IntroDate','TermDate','UserType',
                 'CountyElecDiv','LocalAuthDistrict','Ward','NHSER','Country','Region','PCON','TTWA','ITL','NatPark','LSOA21','MSOA21','WorkplaceZone','SubICB',
                 'BUA22','RU11IND','CensusOutputArea11','Latitude','Londitude','LEP1','LEP2','PoliceArea','IMD','ICB'
                 ]
+dtype_dict = {'PCode7': 'string','PCode8': 'string','UnitPCode': 'string','IntroDate': 'Int64','TermDate': 'Int64','UserType': 'Int8',
+    'NatGridRefEasting': 'Int64','NatGridRefNorthing': 'Int64','NatGridRefQual': 'Int8','OutArea11': 'string','County': 'string',
+    'CountyElecDiv': 'string','LocalAuthDistrict': 'string','Ward': 'string','NHSER': 'string','Country': 'string',
+    'Region': 'string','PCON': 'string','TTWA': 'string','ITL': 'string','NatPark': 'string','LSOA21': 'string',
+    'MSOA21': 'string','WorkplaceZone': 'string','SubICB': 'string','BUA22': 'string','RU11IND': 'string',
+    'CensusOutputArea11': 'string','Latitude': 'float64','Londitude': 'float64','LEP1': 'string','LEP2': 'string',
+    'PoliceArea': 'string','IMD': 'Int64','ICB': 'string'
+    }
 widths =[7,8,8,6,6,1,6,7,1,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,2,3,10,10,9,9,9,5,9]
+
 fileName= r'data/Data/NSPL21_NOV_2023_UK.txt'
 
 # Read the fixed-width text file
-df = pd.read_fwf(fileName, widths=widths, names=column_names, dtype_backend='pyarrow')
+print("Reading the fixed-width text file...")
+df = pd.read_fwf(
+    fileName,
+    widths=widths,
+    names=column_names,
+    dtype=dtype_dict,
+    dtype_backend='pyarrow'
+)
 
 # Connect to a database file (this will create the file if it doesn't exist)
+print("Connecting to DuckDB database...")
 conn = duckdb.connect('data/UKCensusDB.duckdb')
 
 # Create the table and insert data from the DataFrame
-create_stmt = "CREATE TABLE postcode_lookup (PCode7 VARCHAR, PCode8 VARCHAR, UnitPCode VARCHAR, IntroDate INTEGER, TermDate INTEGER, UserType SMALLINT, NatGridRefEasting INTEGER, NatGridRefNorthing INTEGER, NatGridRefQual SMALLINT, OutArea11 VARCHAR, County VARCHAR, CountyElecDiv VARCHAR, LocalAuthDistrict VARCHAR, Ward VARCHAR, NHSER VARCHAR, Country VARCHAR, Region VARCHAR, PCON VARCHAR, TTWA VARCHAR, ITL VARCHAR, NatPark VARCHAR, LSOA21 VARCHAR, MSOA21 VARCHAR, WorkplaceZone VARCHAR, SubICB VARCHAR, BUA22 VARCHAR, RU11IND VARCHAR, CensusOutputArea11 VARCHAR, Latitude DOUBLE, Londitude DOUBLE, LEP1 VARCHAR, LEP2 VARCHAR, PoliceArea VARCHAR, IMD INTEGER, ICB VARCHAR);"
+# Drop the table if it exists
+print("Dropping existing table if it exists...")
+drop_stmt = "DROP TABLE IF EXISTS postcode_lookup;"
+conn.execute(drop_stmt)
+
+print("Creating table and inserting data...")
+create_stmt = "CREATE TABLE postcode_lookup (PCode7 VARCHAR, PCode8 VARCHAR, UnitPCode VARCHAR, IntroDate INTEGER, TermDate INTEGER, UserType TINYINT, NatGridRefEasting INTEGER, NatGridRefNorthing INTEGER, NatGridRefQual TINYINT, OutArea11 VARCHAR, County VARCHAR, CountyElecDiv VARCHAR, LocalAuthDistrict VARCHAR, Ward VARCHAR, NHSER VARCHAR, Country VARCHAR, Region VARCHAR, PCON VARCHAR, TTWA VARCHAR, ITL VARCHAR, NatPark VARCHAR, LSOA21 VARCHAR, MSOA21 VARCHAR, WorkplaceZone VARCHAR, SubICB VARCHAR, BUA22 VARCHAR, RU11IND VARCHAR, CensusOutputArea11 VARCHAR, Latitude DOUBLE, Londitude DOUBLE, LEP1 VARCHAR, LEP2 VARCHAR, PoliceArea VARCHAR, IMD INTEGER, ICB VARCHAR);"
 conn.execute(create_stmt)
 # Insert the DataFrame into the table
 
