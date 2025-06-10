@@ -2,10 +2,10 @@ import pandas as pd
 import duckdb
 
 fileName= r'data/TS067-2021-3.xlsx'
-tableName = 'education'
+tableName = 'language'
 sheetName = 'Dataset'
 
-# Step 1: Load the "Census - {tableName}" sheet from the Excel file
+# Step 1: Load the "Census - Education" sheet from the Excel file
 ##########################################################################################
 df = pd.read_excel(fileName, sheet_name=sheetName, dtype_backend='pyarrow')
 

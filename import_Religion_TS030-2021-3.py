@@ -2,7 +2,7 @@ import pandas as pd
 import duckdb
 
 fileName= r'data/TS067-2021-3.xlsx'
-tableName = 'education'
+tableName = 'religion'
 sheetName = 'Dataset'
 
 # Step 1: Load the "Census - {tableName}" sheet from the Excel file
@@ -23,7 +23,7 @@ conn.execute(drop_stmt)
 conn.execute(f"CREATE TABLE {tableName} AS SELECT * FROM df")
 
 # Optional: Verify
-result = conn.execute(f"SELECT * FROM {tableName} LIMIT 10").fetchdf()
+result = conn.execute(f"SELECT * FROM {tableName} LIMIT 5").fetchdf()
 print(result)
 
 # Close the connection
