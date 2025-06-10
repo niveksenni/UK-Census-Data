@@ -22,23 +22,19 @@ conn = duckdb.connect('data/UKCensusDB.duckdb')
 
 # Create the table and insert data from the DataFrame
 create_stmt = "CREATE TABLE postcode_lookup (PCode7 VARCHAR, PCode8 VARCHAR, UnitPCode VARCHAR, IntroDate INTEGER, TermDate INTEGER, UserType SMALLINT, NatGridRefEasting INTEGER, NatGridRefNorthing INTEGER, NatGridRefQual SMALLINT, OutArea11 VARCHAR, County VARCHAR, CountyElecDiv VARCHAR, LocalAuthDistrict VARCHAR, Ward VARCHAR, NHSER VARCHAR, Country VARCHAR, Region VARCHAR, PCON VARCHAR, TTWA VARCHAR, ITL VARCHAR, NatPark VARCHAR, LSOA21 VARCHAR, MSOA21 VARCHAR, WorkplaceZone VARCHAR, SubICB VARCHAR, BUA22 VARCHAR, RU11IND VARCHAR, CensusOutputArea11 VARCHAR, Latitude DOUBLE, Londitude DOUBLE, LEP1 VARCHAR, LEP2 VARCHAR, PoliceArea VARCHAR, IMD INTEGER, ICB VARCHAR);"
+conn.execute(create_stmt)
+# Insert the DataFrame into the table
 
-sql = "CREATE TABLE postcode_lookup AS SELECT * FROM df"
-conn.execute(sql)
+# Register the DataFrame as a DuckDB view
+conn.register('df_view', df)
+
+# Insert data from the DataFrame into the table
+conn.execute("INSERT INTO postcode_lookup SELECT * FROM df_view")
+
+#sql = "CREATE TABLE postcode_lookup AS SELECT * FROM df"
+#conn.execute(sql) 
 
 # Verify the data
-table = 'postcode_lookup'
-columns = conn.execute(f"""
-    SELECT column_name, data_type
-    FROM information_schema.columns
-    WHERE table_name = '{table}'
-    ORDER BY ordinal_position
-""").fetchall()
-
-# Build CREATE TABLE statement
-cols = ',\n  '.join([f"{name} {dtype}" for name, dtype in columns])
-create_stmt = f"CREATE TABLE {table} (\n  {cols}\n);"
-print(create_stmt)
 
 result = conn.execute("SELECT * FROM postcode_lookup limit 1000").fetchall()
 print(result)
