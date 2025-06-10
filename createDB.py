@@ -4,28 +4,42 @@ import duckdb
 
 # Define the column specifications (widths) and names
 colspecs =     [(0, 6),(6, 15),(15, 23),(23, 29),(29, 35),(35, 36),(36, 42),(42, 49),(49, 50),(50, 59),(59, 68),(68, 77),(77, 86),(86, 95),(95, 104),(104, 113),
-                (113, 122),(122, 131),(131, 140),(140, 149),(149, 158),(158, 167),(167, 176),(176, 185),(185, 194),(194, 203),(203, 212),(212, 221),(221, 230),
-                (230, 239),(239, 248),(248, 250),(250, 253),(253, 263),(263, 273),(273, 282),(282, 291),(291, 300),(300, 305),(305, 314),(314, 323)
+                (113, 122),(122, 131),(131, 140),(140, 149),(149, 158),(158, 167),(167, 176),(176, 185),(185, 194),(194, 203),(203, 205),(205, 208),(208, 218),
+                (218, 228),(228, 237),(237, 246),(246, 255),(255, 260),(260, 269)
                 ]
 column_names = ['PCode7','PCode8','UnitPCode','IntroDate','TermDate','UserType','NatGridRefEasting','NatGridRefNorthing','NatGridRefQual','OutArea11','County',
-                'CountyElecDiv','LocalAuthDistrict','Ward','HLTHAU','NHSER','Country','Region','PCON','EERegion','TECLEC','TTWA','PCT','ITL','NatPark','LSOA11',
-                'MSOA11','WorkplaceZone','SubICB','BUA11','BUASD11','RU11IND','CensusOutputArea11','Latitude','Londitude','LEP1','LEP2','PoliceArea','IMD',
-                'CALNVC','STP'
+                'CountyElecDiv','LocalAuthDistrict','Ward','NHSER','Country','Region','PCON','TTWA','ITL','NatPark','LSOA21','MSOA21','WorkplaceZone','SubICB',
+                'BUA22','RU11IND','CensusOutputArea11','Latitude','Londitude','LEP1','LEP2','PoliceArea','IMD','ICB'
                 ]
-widths =[7,8,8,6,6,1,6,7,1,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,2,3,10,10,9,9,9,5,9,9]
-fileName= r'NSPL21_NOV_2023_UK.txt'
+widths =[7,8,8,6,6,1,6,7,1,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,2,3,10,10,9,9,9,5,9]
+fileName= r'data/Data/NSPL21_NOV_2023_UK.txt'
 
 # Read the fixed-width text file
-#df = pd.read_fwf(fileName, widths=widths, names=column_names)
+df = pd.read_fwf(fileName, widths=widths, names=column_names, dtype_backend='pyarrow')
 
 # Connect to a database file (this will create the file if it doesn't exist)
-conn = duckdb.connect('UKCensusDB.duckdb')
+conn = duckdb.connect('data/UKCensusDB.duckdb')
 
 # Create the table and insert data from the DataFrame
+create_stmt = "CREATE TABLE postcode_lookup (PCode7 VARCHAR, PCode8 VARCHAR, UnitPCode VARCHAR, IntroDate INTEGER, TermDate INTEGER, UserType SMALLINT, NatGridRefEasting INTEGER, NatGridRefNorthing INTEGER, NatGridRefQual SMALLINT, OutArea11 VARCHAR, County VARCHAR, CountyElecDiv VARCHAR, LocalAuthDistrict VARCHAR, Ward VARCHAR, NHSER VARCHAR, Country VARCHAR, Region VARCHAR, PCON VARCHAR, TTWA VARCHAR, ITL VARCHAR, NatPark VARCHAR, LSOA21 VARCHAR, MSOA21 VARCHAR, WorkplaceZone VARCHAR, SubICB VARCHAR, BUA22 VARCHAR, RU11IND VARCHAR, CensusOutputArea11 VARCHAR, Latitude DOUBLE, Londitude DOUBLE, LEP1 VARCHAR, LEP2 VARCHAR, PoliceArea VARCHAR, IMD INTEGER, ICB VARCHAR);"
+
 sql = "CREATE TABLE postcode_lookup AS SELECT * FROM df"
 conn.execute(sql)
 
 # Verify the data
+table = 'postcode_lookup'
+columns = conn.execute(f"""
+    SELECT column_name, data_type
+    FROM information_schema.columns
+    WHERE table_name = '{table}'
+    ORDER BY ordinal_position
+""").fetchall()
+
+# Build CREATE TABLE statement
+cols = ',\n  '.join([f"{name} {dtype}" for name, dtype in columns])
+create_stmt = f"CREATE TABLE {table} (\n  {cols}\n);"
+print(create_stmt)
+
 result = conn.execute("SELECT * FROM postcode_lookup limit 1000").fetchall()
 print(result)
 
